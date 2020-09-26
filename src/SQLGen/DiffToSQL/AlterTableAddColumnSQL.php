@@ -12,13 +12,13 @@ class AlterTableAddColumnSQL implements SQLGenInterface {
     public function getUp() {
         $table = $this->obj->table;
         $schema = $this->obj->diff->getNewValue();
-        return "ALTER TABLE `$table` ADD $schema;";
+        return "ADD $schema";
     }
 
     public function getDown() {
         $table = $this->obj->table;
         $column = $this->obj->column;
-        return "ALTER TABLE `$table` DROP `$column`;";
+        return "DROP `$column`";
     }
 
 }

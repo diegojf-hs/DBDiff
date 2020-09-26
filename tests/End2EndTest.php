@@ -10,24 +10,24 @@ class End2EndTest extends PHPUnit\Framework\TestCase
     {
         // db config
         $host = "127.0.0.1";
-        $port = 3306;
+        $port = 3307;
         $user = "root";
-        $pass = "";
+        $pass = "root";
         $db1  = "diff1";
         $db2  = "diff2";
 
         // db migration
         $migration_actual = 'migration_actual';
         $migration_expected = 'migration_expected';
-        $dbh = new PDO("mysql:host=$host", $user, $pass);
+        $dbh = new PDO("mysql:host=$host;port=$port", $user, $pass);
         $dbh->exec("DROP DATABASE `$db1`;");
         $dbh->exec("CREATE DATABASE $db1;");
         $dbh->exec("DROP DATABASE `$db2`;");
         $dbh->exec("CREATE DATABASE $db2;");
 
-        $db1h = new PDO("mysql:host=$host;dbname=$db1;", $user, $pass);
+        $db1h = new PDO("mysql:host=$host;port=$port;dbname=$db1;", $user, $pass);
         $db1h->exec(file_get_contents('tests/end2end/db1-up.sql'));
-        $db2h = new PDO("mysql:host=$host;dbname=$db2;", $user, $pass);
+        $db2h = new PDO("mysql:host=$host;port=$port;dbname=$db2;", $user, $pass);
         $db2h->exec(file_get_contents('tests/end2end/db2-up.sql'));
 
         $GLOBALS['argv'] = [
