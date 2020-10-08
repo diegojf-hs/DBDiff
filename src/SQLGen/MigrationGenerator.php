@@ -19,33 +19,42 @@ class MigrationGenerator {
             $tables[$diff->table][$diff_type][] = $diff;
         }
         
-        foreach($tables as $table_diffs) {
-            foreach($table_diffs as $type => $diffs_by_type) {
+        foreach($tables as $table_name => $table_diffs) {
+            $alters = "";
+            $non_alters = "";
+            $combined_alters = array();
+
+            foreach($table_diffs as $type => $diffs_for_type) {
                 $sqlGenClass = __NAMESPACE__."\\DiffToSQL\\".$type."SQL";
 
                 if (substr($type, 0, strlen("Alter")) === "Alter") {
-                    $table = $diffs_by_type[0]->table;
-                    $sql .= "ALTER TABLE `$table` ";
-
-                    $is_first = true;
-                    foreach($diffs_by_type as $diff) {
-                        $gen = new $sqlGenClass($diff);
-                        if(!$is_first) {
-                            $sql .= ", ";
-                        }
-                        $sql .= $gen->$method();
-                        $is_first = false;
-                    }
-                    $sql .= ";\n";
+                    $combined_alters = array_merge($combined_alters, $diffs_for_type);
                 } else {
-                    foreach($diffs_by_type as $diff) {
+                    foreach($diffs_for_type as $diff) {
                         $gen = new $sqlGenClass($diff);
-                        $sql .= $gen->$method()."\n";   
+                        $non_alters .= $gen->$method()."\n";   
                     }
                 }
             }
+            
+            if (count($combined_alters)){
+                $alters .= "ALTER TABLE `$table_name` ";
+                
+                $is_first = true;
+                foreach($combined_alters as $diff) {
+                    $gen = new $sqlGenClass($diff);
+                    if(!$is_first) {
+                        $alters .= ", ";
+                    }
+                    $alters .= $gen->$method();
+                    $is_first = false;
+                }
+                $alters .= ";\n";
+            }
+            $sql .= $alters.$non_alters;
         }
         return $sql;
     }
 
 }
+
