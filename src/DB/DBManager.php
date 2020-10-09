@@ -66,8 +66,12 @@ class DBManager {
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci'
         ], 'connection_without_db');
-        $this->getDB('connection_without_db')->select("CREATE DATABASE IF NOT EXISTS ".$db_name.";");
-        sleep(5); // due to minimal replication lag in Staging
+        try {
+            $this->getDB('connection_without_db')->select("CREATE DATABASE IF NOT EXISTS ".$db_name.";");
+            sleep(5); // due to minimal replication lag in Staging
+        } catch(\Exception $e) {
+            throw new DBException("Unable to create database ".$db_name);
+        }
     }
 
     public function getDB($res) {
