@@ -25,11 +25,10 @@ class MigrationGenerator {
             $combined_alters = array();
 
             foreach($table_diffs as $type => $diffs_for_type) {
-                $sqlGenClass = __NAMESPACE__."\\DiffToSQL\\".$type."SQL";
-
                 if (substr($type, 0, strlen("Alter")) === "Alter") {
                     $combined_alters = array_merge($combined_alters, $diffs_for_type);
                 } else {
+                    $sqlGenClass = __NAMESPACE__."\\DiffToSQL\\".$type."SQL";
                     foreach($diffs_for_type as $diff) {
                         $gen = new $sqlGenClass($diff);
                         $non_alters .= $gen->$method()."\n";   
@@ -42,6 +41,8 @@ class MigrationGenerator {
                 
                 $is_first = true;
                 foreach($combined_alters as $diff) {
+                    $reflection = new \ReflectionClass($diff);
+                    $sqlGenClass = __NAMESPACE__."\\DiffToSQL\\".$reflection->getShortName()."SQL";
                     $gen = new $sqlGenClass($diff);
                     if(!$is_first) {
                         $alters .= ", ";
