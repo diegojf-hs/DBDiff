@@ -5,6 +5,7 @@ use DBDiff\Exceptions\DBException;
 
 
 class DBManager {
+    const STAGING_DB_IPS = ['192.168.151.61', '45.33.17.150'];
 
     function __construct() {
         $this->capsule = new Capsule;
@@ -29,15 +30,22 @@ class DBManager {
     }
 
     public function testResources($params) {
-        $this->testResource($params->input['source'], 'source');
-        $this->testResource($params->input['target'], 'target');
+        $input = $params->input['source'];
+        $this->testResource($params->input['source'], 'source', $params->{$input['server']});
+        $input = $params->input['target'];
+        $this->testResource($params->input['target'], 'target', $params->{$input['server']});
     }
 
-    public function testResource($input, $res) {
+    public function testResource($input, $res, $server) {
         try {
             $this->capsule->getConnection($res);
         } catch(\Exception $e) {
-            throw new DBException("Can't connect to target database");
+            if (in_array($server['host'], self::STAGING_DB_IPS)) {
+                // The database probably does not exist, attempt to create it
+                $this->createDB($input['db'], $server);
+            } else {
+                throw new DBException("Can't connect to target database");
+            }
         }
         if (!empty($input['table'])) {
             try {
@@ -46,6 +54,19 @@ class DBManager {
                 throw new DBException("Can't access target table");
             }
         }
+    }
+
+    private function createDB($db_name, $server) {
+        $this->capsule->addConnection([
+            'driver'    => 'mysql',
+            'host'      => $server['host'],
+            'port'      => 3306,
+            'username'  => $server['user'],
+            'password'  => $server['password'],
+            'charset'   => 'utf8',
+            'collation' => 'utf8_unicode_ci'
+        ], 'connection_without_db');
+        $this->getDB('connection_without_db')->select("CREATE DATABASE IF NOT EXISTS ".$db_name.";");
     }
 
     public function getDB($res) {
