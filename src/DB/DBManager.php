@@ -67,6 +67,7 @@ class DBManager {
             'collation' => 'utf8_unicode_ci'
         ], 'connection_without_db');
         $this->getDB('connection_without_db')->select("CREATE DATABASE IF NOT EXISTS ".$db_name.";");
+        sleep(5); // due to minimal replication lag in Staging
     }
 
     public function getDB($res) {
