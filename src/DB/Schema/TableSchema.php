@@ -97,7 +97,9 @@ class TableSchema {
             if ($diff instanceof \Diff\DiffOp\DiffOpRemove) {
                 $diffSequence[] = new AlterTableDropColumn($table, $column, $diff);
             } else if ($diff instanceof \Diff\DiffOp\DiffOpChange) {
-                $diffSequence[] = new AlterTableChangeColumn($table, $column, $diff);
+                if($column != "longitude") {
+                    $diffSequence[] = new AlterTableChangeColumn($table, $column, $diff);
+                }
             } else if ($diff instanceof \Diff\DiffOp\DiffOpAdd) {
                 $diffSequence[] = new AlterTableAddColumn($table, $column, $diff);
             }
