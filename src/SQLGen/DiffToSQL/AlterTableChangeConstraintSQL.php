@@ -13,14 +13,14 @@ class AlterTableChangeConstraintSQL implements SQLGenInterface {
         $table = $this->obj->table;
         $name = $this->obj->name;
         $schema = $this->obj->diff->getNewValue();
-        return "DROP CONSTRAINT `$key`, ADD $schema";
+        return "DROP FOREIGN KEY `$key`, ADD $schema";
     }
 
     public function getDown() {
         $table = $this->obj->table;
         $name = $this->obj->name;
         $schema = $this->obj->diff->getOldValue();
-        return "DROP CONSTRAINT `$key`, ADD $schema";
+        return "DROP FOREIGN KEY `$key`, ADD $schema";
     }
 
 }

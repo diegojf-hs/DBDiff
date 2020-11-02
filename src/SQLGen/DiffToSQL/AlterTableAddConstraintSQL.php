@@ -18,7 +18,7 @@ class AlterTableAddConstraintSQL implements SQLGenInterface {
     public function getDown() {
         $table = $this->obj->table;
         $name = $this->obj->name;
-        return "DROP CONSTRAINT `$name`";
+        return "DROP FOREIGN KEY `$name`";
     }
 
 }

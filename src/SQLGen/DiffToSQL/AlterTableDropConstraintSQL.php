@@ -12,7 +12,7 @@ class AlterTableDropConstraintSQL implements SQLGenInterface {
     public function getUp() {
         $table = $this->obj->table;
         $name = $this->obj->name;
-        return "DROP CONSTRAINT `$name`";
+        return "DROP FOREIGN KEY `$name`";
     }
 
     public function getDown() {
