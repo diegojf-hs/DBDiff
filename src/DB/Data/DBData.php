@@ -20,8 +20,9 @@ class DBData {
         // Tables
         $tableData = new TableData($this->manager);
 
-        $sourceTables = $this->manager->getTables('source');
-        $targetTables = $this->manager->getTables('target');
+        ['tables' => $sourceTables, 'views' => $sourceViews] = $this->manager->getTablesAndViews('source');
+        ['tables' => $targetTables, 'views' => $targetViews] = $this->manager->getTablesAndViews('target');
+        // Views not used for data diffs
 
         if (isset($params->tablesToIgnore)) {
             $sourceTables = array_diff($sourceTables, $params->tablesToIgnore);

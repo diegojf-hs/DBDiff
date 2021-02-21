@@ -5,8 +5,8 @@ use Diff\Differ\ListDiffer;
 use DBDiff\Params\ParamsFactory;
 use DBDiff\Diff\SetDBCollation;
 use DBDiff\Diff\SetDBCharset;
-use DBDiff\Diff\DropTable;
-use DBDiff\Diff\AddTable;
+use DBDiff\Diff\DropTableOrView;
+use DBDiff\Diff\AddTableOrView;
 use DBDiff\Diff\AlterTable;
 
 
@@ -40,8 +40,8 @@ class DBSchema {
         // Tables
         $tableSchema = new TableSchema($this->manager);
 
-        $sourceTables = $this->manager->getTables('source');
-        $targetTables = $this->manager->getTables('target');
+        ['tables' => $sourceTables, 'views' => $sourceViews] = $this->manager->getTablesAndViews('source');
+        ['tables' => $targetTables, 'views' => $targetViews] = $this->manager->getTablesAndViews('target');
 
         if (isset($params->tablesToIgnore)) {
             $sourceTables = array_diff($sourceTables, $params->tablesToIgnore);
@@ -50,7 +50,11 @@ class DBSchema {
 
         $addedTables = array_diff($sourceTables, $targetTables);
         foreach ($addedTables as $table) {
-            $diffs[] = new AddTable($table, $this->manager->getDB('source'));
+            $diffs[] = new AddTableOrView($table, $this->manager->getDB('source'), 'table');
+        }
+        $addedViews = array_diff($sourceViews, $targetViews);
+        foreach ($addedViews as $table) {
+            $diffs[] = new AddTableOrView($table, $this->manager->getDB('source'), 'view');
         }
 
         $commonTables = array_intersect($sourceTables, $targetTables);
@@ -61,7 +65,11 @@ class DBSchema {
 
         $deletedTables = array_diff($targetTables, $sourceTables);
         foreach ($deletedTables as $table) {
-            $diffs[] = new DropTable($table, $this->manager->getDB('target'));
+            $diffs[] = new DropTableOrView($table, $this->manager->getDB('target'), 'table');
+        }
+        $deletedViews = array_diff($targetViews, $sourceViews);
+        foreach ($deletedViews as $table) {
+            $diffs[] = new DropTableOrView($table, $this->manager->getDB('target'), 'view');
         }
 
         return $diffs;

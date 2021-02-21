@@ -3,18 +3,13 @@
 use DBDiff\SQLGen\SQLGenInterface;
 
 
-class DropTableSQL implements SQLGenInterface {
+class AddTableOrViewSQL implements SQLGenInterface {
 
     function __construct($obj) {
         $this->obj = $obj;
     }
     
     public function getUp() {
-        $table = $this->obj->table;
-        return "DROP TABLE `$table`;";
-    }
-
-    public function getDown() {
         $table = $this->obj->table;
         $connection = $this->obj->connection;
         $res = $connection->select("SHOW CREATE TABLE `$table`");
@@ -27,4 +22,9 @@ class DropTableSQL implements SQLGenInterface {
         return $table_or_view_declaration;
     }
 
+    public function getDown() {
+        $table = $this->obj->table;
+        $type = $this->obj->type;
+        return "DROP ". ($type === 'table' ? 'TABLE' : 'VIEW' )." `$table`;";
+    }
 }

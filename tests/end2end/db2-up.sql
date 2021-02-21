@@ -37,3 +37,4 @@ CREATE TABLE IF NOT EXISTS `zz` (
 
 INSERT INTO `zz` (`id`, `name`, `time`, `bool`) VALUES (1, 'name', '2015-05-10 17:54:05', 1);
 
+CREATE VIEW `myview` AS SELECT * FROM `zz`;

@@ -78,9 +78,18 @@ class DBManager {
         return $this->capsule->getConnection($res);
     }
 
-    public function getTables($connection) {
-        $result = $this->getDB($connection)->select("show tables");
-        return array_flatten($result);
+    public function getTablesAndViews($connection) {
+        $results = $this->getDB($connection)->select("show full tables");
+        $tables = [];
+        $views = [];
+        foreach ($results as $tableOrView) {
+            if ($tableOrView['Table_type'] === 'BASE TABLE') {
+                $tables[] = array_values($tableOrView)[0];
+            } else {
+                $views[] = array_values($tableOrView)[0];
+            }
+        }
+        return array('tables' => $tables, 'views' => $views);
     }
 
     public function getColumns($connection, $table) {
