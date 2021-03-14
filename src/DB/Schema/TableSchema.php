@@ -110,11 +110,14 @@ class TableSchema {
         $diffs = $differ->doDiff($targetKeys, $sourceKeys);
         foreach ($diffs as $key => $diff) {
             if ($diff instanceof \Diff\DiffOp\DiffOpRemove) {
-                $diffSequence[] = new AlterTableDropKey($table, $key, $diff);
+                $droppingPKey = strpos($diff->getOldValue(), 'PRIMARY') === 0;
+                $diffSequence[] = new AlterTableDropKey($table, $key, $diff, $droppingPKey);
             } else if ($diff instanceof \Diff\DiffOp\DiffOpChange) {
-                $diffSequence[] = new AlterTableChangeKey($table, $key, $diff);
+                $droppingPKey = strpos($diff->getOldValue(), 'PRIMARY') === 0;
+                $diffSequence[] = new AlterTableChangeKey($table, $key, $diff, $droppingPKey);
             } else if ($diff instanceof \Diff\DiffOp\DiffOpAdd) {
-                $diffSequence[] = new AlterTableAddKey($table, $key, $diff);
+                $addingPKey = strpos($diff->getNewValue(), 'PRIMARY') === 0;
+                $diffSequence[] = new AlterTableAddKey($table, $key, $diff, $addingPKey);
             }
         }
 

@@ -12,7 +12,7 @@ class AlterTableDropKeySQL implements SQLGenInterface {
     public function getUp() {
         $table = $this->obj->table;
         $key   = $this->obj->key;
-        return "DROP INDEX `$key`";
+        return "DROP ". ($this->obj->isPKey ? 'PRIMARY KEY' : "INDEX `$key`");
     }
 
     public function getDown() {

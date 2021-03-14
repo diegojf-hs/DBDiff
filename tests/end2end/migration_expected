@@ -5,9 +5,9 @@ CREATE TABLE `cc` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 DROP TABLE `zz`;
 DROP VIEW `myview`;
-ALTER TABLE `aa` ENGINE = InnoDB, DEFAULT COLLATE latin1_swedish_ci, ADD `as` int(11) NOT NULL, ADD `qw` int(11) NOT NULL, CHANGE `name` `name` varchar(255) NOT NULL, CHANGE `pass` `pass` varchar(255) DEFAULT NULL, DROP `zx`, ADD KEY `as` (`as`), ADD UNIQUE KEY `name` (`name`), DROP INDEX `id`, ADD PRIMARY KEY (`id`), DROP INDEX `pass`, DROP INDEX `namekey`, ADD CONSTRAINT `as` FOREIGN KEY (`as`) REFERENCES `bb` (`id`);
+ALTER TABLE `aa` DEFAULT COLLATE latin1_swedish_ci, ADD `as` int(11) NOT NULL, ADD `qw` int(11) NOT NULL, CHANGE `pass` `pass` varchar(255) DEFAULT NULL, CHANGE `name` `name` varchar(255) NOT NULL, DROP `zx`, ADD KEY `as` (`as`), ADD UNIQUE KEY `name` (`name`), DROP PRIMARY KEY, ADD PRIMARY KEY (`id`), DROP INDEX `namekey`, DROP INDEX `pass`, ADD CONSTRAINT `as` FOREIGN KEY (`as`) REFERENCES `bb` (`id`);
 ALTER TABLE `bb` DEFAULT COLLATE latin1_swedish_ci, ADD `jj` int(11) NOT NULL, ADD PRIMARY KEY (`id`);
-ALTER TABLE `asas` DEFAULT COLLATE latin1_spanish_ci, CHANGE `lastname` `lastname` varchar(255) COLLATE latin1_spanish_ci NOT NULL, CHANGE `firstname` `firstname` varchar(255) COLLATE latin1_spanish_ci NOT NULL;
+ALTER TABLE `asas` DEFAULT COLLATE latin1_spanish_ci, CHANGE `lastname` `lastname` varchar(255) COLLATE latin1_spanish_ci NOT NULL, CHANGE `firstname` `firstname` varchar(255) COLLATE latin1_spanish_ci NOT NULL, DROP PRIMARY KEY, ADD PRIMARY KEY (`id`,`firstname`);
 """
 SQL_DOWN = u"""
 DROP TABLE `cc`;
@@ -21,7 +21,7 @@ CREATE TABLE `zz` (
   KEY `time` (`time`,`bool`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `myview` AS select `zz`.`id` AS `id`,`zz`.`name` AS `name`,`zz`.`time` AS `time`,`zz`.`bool` AS `bool` from `zz`;
-ALTER TABLE `aa` ENGINE = MyISAM, DEFAULT COLLATE latin1_spanish_ci, DROP `as`, DROP `qw`, CHANGE `name` `name` varchar(255) CHARACTER SET latin1 NOT NULL DEFAULT 'aa', CHANGE `pass` `pass` varchar(255) CHARACTER SET latin1 NOT NULL, ADD `zx` int(11) NOT NULL, DROP INDEX `as`, DROP INDEX `name`, DROP INDEX `id`, ADD PRIMARY KEY (`id`,`name`), ADD UNIQUE KEY `pass` (`pass`), ADD UNIQUE KEY `namekey` (`name`,`pass`,`zx`), DROP FOREIGN KEY `as`;
-ALTER TABLE `bb` DEFAULT COLLATE latin1_bin, DROP `jj`, DROP INDEX `id`;
-ALTER TABLE `asas` DEFAULT COLLATE latin1_bin, CHANGE `lastname` `lastname` varchar(255) COLLATE latin1_bin NOT NULL, CHANGE `firstname` `firstname` varchar(255) COLLATE latin1_bin NOT NULL;
+ALTER TABLE `aa` DEFAULT COLLATE latin1_spanish_ci, DROP `as`, DROP `qw`, CHANGE `pass` `pass` varchar(255) CHARACTER SET latin1 NOT NULL, CHANGE `name` `name` varchar(255) CHARACTER SET latin1 NOT NULL DEFAULT 'aa', ADD `zx` int(11) NOT NULL, DROP INDEX `as`, DROP INDEX `name`, DROP PRIMARY KEY, ADD PRIMARY KEY (`id`,`name`), ADD UNIQUE KEY `namekey` (`name`,`pass`,`zx`), ADD UNIQUE KEY `pass` (`pass`), DROP FOREIGN KEY `as`;
+ALTER TABLE `bb` DEFAULT COLLATE latin1_bin, DROP `jj`, DROP PRIMARY KEY;
+ALTER TABLE `asas` DEFAULT COLLATE latin1_bin, CHANGE `lastname` `lastname` varchar(255) COLLATE latin1_bin NOT NULL, CHANGE `firstname` `firstname` varchar(255) COLLATE latin1_bin NOT NULL, DROP PRIMARY KEY, ADD PRIMARY KEY (`id`);
 """

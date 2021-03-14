@@ -13,14 +13,14 @@ class AlterTableChangeKeySQL implements SQLGenInterface {
         $table = $this->obj->table;
         $key = $this->obj->key;
         $schema = $this->obj->diff->getNewValue();
-        return "DROP INDEX `$key`, ADD $schema";
+        return "DROP ". ($this->obj->isPKey ? 'PRIMARY KEY' : "INDEX `$key`").", ADD $schema";
     }
 
     public function getDown() {
         $table = $this->obj->table;
         $key = $this->obj->key;
         $schema = $this->obj->diff->getOldValue();
-        return "DROP INDEX `$key`, ADD $schema";
+        return "DROP ". ($this->obj->isPKey ? 'PRIMARY KEY' : "INDEX `$key`").", ADD $schema";
     }
 
 }
